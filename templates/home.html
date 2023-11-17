@@ -12,16 +12,16 @@
 	</head>
 	<body>
 		{% include 'header.html' %}
-		<div class="banner" style="background: no-repeat center/100% url({{ url_for('static', filename='banner.jpg') }})">
-			<div class="nextBtn">
-				<a class="btnText" href="/recommend">Find Your Next Book</a>
+		<div class="banner" style="background: no-repeat center/100% url({{ url_for('static', filename='banner.jpg') }})"/>
+			<div class="next-btn">
+				<a class="btn-text" href="/recommend">Find Your Next Book</a>
 			</div>
 		</div>
-		<div id="topBooks" class="topBooks">
+		<div id="top-books" class="top-books">
 			<div class="title">Top 50 Books</div>
-			<div class="listContainer">
+			<div class="list-container">
 				{% for i in range(book_name|length) %}
-					<div class="bookCard" style="width: 18rem">
+					<div class="book-card" style="width: 18rem">
 						<img src="{{ book_image[i] }}" class="card-img-top" alt="..." />
 						<div class="card-body">
 							<p class="card-title">{{ book_name[i] }}</p>

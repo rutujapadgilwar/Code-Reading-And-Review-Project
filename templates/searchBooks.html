@@ -10,9 +10,9 @@
 	<body>
 		<div class="wrapper">
 			{% include 'header.html' %}
-			<div class="searchContainer">
-				<div class="searchTitle">Find Your Books</div>
-				<form class="searchForm" action="/recommend_books" method="post">
+			<div class="search-container">
+				<div class="search-title">Find Your Books</div>
+				<form class="search-form" action="/recommend_books" method="post">
 					<select class="dropdown" name="searchBy" id="searchBy">
 						<option value="bookname">Book Name</option>
 						<option value="author">Author name</option>
@@ -21,20 +21,20 @@
 						<option value="location">Location</option>
 					</select>
 					<input
-						id="userInput"
-						name="userInput"
+						id="user-input"
+						name="user-input"
 						type="text"
 						placeholder="Enter the input"
-						class="form-control searchBar"
+						class="form-control search-bar"
 					/><br />
-					<input type="submit" class="searchBtn" value="Search" />
+					<input type="submit" class="search-btn" value="Search" />
 				</form>
 			</div>
-			<div class="recommendedBooks">
+			<div class="recommended-books">
 				{% for i in range(bookList|length) %}
-				<div class="bookCategoryWrapper">
-					<p class="recommendationTitle">{{bookList[i].title}}</p>
-					<div class="listContainer">
+				<div class="book-category-wrapper">
+					<p class="recommendation-title">{{bookList[i].title}}</p>
+					<div class="list-container">
 						{% for j in range(bookList[i].books|length) %}
 						{% include 'card.html' %}
 						{% endfor %}

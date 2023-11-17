@@ -16,11 +16,12 @@ df_pivot_table = pd.DataFrame()
 df_similarity_scores = []
 def loadData():
     global df_recommendation_dataset, df_author_recommendations, df_books, df_pivot_table, df_similarity_scores   
-    df_recommendation_dataset = (pickle.load(open('books_with_ratings.pkl', 'rb')))
-    df_author_recommendations = (pickle.load(open('author_recommendations.pkl', 'rb')))
-    df_books = (pickle.load(open('books.pkl', 'rb')))
-    df_pivot_table = (pickle.load(open('pivot_table.pkl', 'rb')))
-    df_similarity_scores = pickle.load(open('similarity_scores.pkl', 'rb'))
+    df_recommendation_dataset = (pickle.load(open('pklFiles/books_with_ratings.pkl', 'rb')))
+    df_author_recommendations = (pickle.load(open('pklFiles/author_recommendations.pkl', 'rb')))
+    df_books = (pickle.load(open('pklFiles/books.pkl', 'rb')))
+    df_pivot_table = (pickle.load(open('pklFiles/pivot_table.pkl', 'rb')))
+    df_similarity_scores = pickle.load(open('pklFiles/similarity_scores.pkl', 'rb'))
+
 loadData()
 # %% [markdown]
 # #### Create objects for the recommended books

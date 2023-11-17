@@ -3,22 +3,23 @@ import pickle
 import numpy as np
 import json
 
-from recommendations import getAllRecommendationsByBookName
-from recommendations import getAllRecommendationsByAuthorName
-from recommendations import getAllRecommendationsByPublisherName
-from recommendations import getAllRecommendationsByYear
-from recommendations import getAllRecommendationsByLocation
-from recommendations import loadData
-top_books = pickle.load(open('top_books.pkl', 'rb'))
-loadData()
+from recommendations import get_recommendations_by_book
+from recommendations import get_recommendations_by_author
+from recommendations import get_recommendations_by_publisher
+from recommendations import get_recommendations_by_yearr
+from recommendations import get_recommendations_by_location
+from recommendations import load_data
+
+top_50_books = pickle.load(open('pklFiles/top_50_books.pkl', 'rb'))
+load_data()
 app = Flask(__name__)
 
 @app.route('/')
 def index():
     return render_template('home.html',
-    book_name = list(top_books['Book-Title'].values),
-    book_author = list(top_books['Book-Author'].values),
-    book_image = list(top_books['Image-URL-M'].values)
+    book_name = list(top_50_books['Book-Title'].values),
+    book_author = list(top_50_books['Book-Author'].values),
+    book_image = list(top_50_books['Image-URL-M'].values)
     )
 
 @app.route('/recommend')
@@ -27,29 +28,29 @@ def recommend_ui():
 
 @app.route('/recommend_books',methods=['post'])
 def recommend():
-    userInput = request.form.get('userInput')
-    selectorValue = request.form.get('searchBy')
-    if len(str(userInput)) == 0:   
+    user_input = request.form.get('user_input')
+    option_selection = request.form.get('searchBy')
+    if len(str(user_input)) == 0:   
         return render_template('searchBooks.html')
-    allResults = []
+    final_results = []
 
-    match selectorValue:
+    match option_selection:
         case "bookname":
-            allResults = json.loads(getAllRecommendationsByBookName(userInput))
+            final_results = json.loads(get_recommendations_by_book(user_input))
         
         case "author":
-            allResults = json.loads(getAllRecommendationsByAuthorName(userInput))
+            final_results = json.loads(get_recommendations_by_author(user_input))
 
         case "publisher":
-            allResults = json.loads(getAllRecommendationsByPublisherName(userInput))
+            final_results = json.loads(get_recommendations_by_publisher(user_input))
 
         case "year":
-            allResults = json.loads(getAllRecommendationsByYear(userInput))
+            final_results = json.loads(get_recommendations_by_yearr(user_input))
 
         case "location":
-            allResults = json.loads(getAllRecommendationsByLocation(userInput))
+            final_results = json.loads(get_recommendations_by_location(user_input))
 
-    return render_template('searchBooks.html', bookList=allResults)
+    return render_template('searchBooks.html', bookList=final_results)
 
 
 if __name__== '__main__':
