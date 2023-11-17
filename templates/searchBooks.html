@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='book.png') }}"/>
+		<meta charset="UTF-8" />
+		<link href="{{ url_for('static', filename='base.css') }}" rel="stylesheet" />
+		<link href="{{ url_for('static', filename='searchBooks.css') }}" rel="stylesheet" />
+		<title>Book Recommender System</title>
+	</head>
+	<body>
+		<div class="wrapper">
+			{% include 'header.html' %}
+			<div class="searchContainer">
+				<div class="searchTitle">Find Your Books</div>
+				<form class="searchForm" action="/recommend_books" method="post">
+					<select class="dropdown" name="searchBy" id="searchBy">
+						<option value="bookname">Book Name</option>
+						<option value="author">Author name</option>
+						<option value="publisher">Publisher Name</option>
+						<option value="year">Year</option>
+						<option value="location">Location</option>
+					</select>
+					<input
+						id="userInput"
+						name="userInput"
+						type="text"
+						placeholder="Enter the input"
+						class="form-control searchBar"
+					/><br />
+					<input type="submit" class="searchBtn" value="Search" />
+				</form>
+			</div>
+			<div class="recommendedBooks">
+				{% for i in range(bookList|length) %}
+				<div class="bookCategoryWrapper">
+					<p class="recommendationTitle">{{bookList[i].title}}</p>
+					<div class="listContainer">
+						{% for j in range(bookList[i].books|length) %}
+						{% include 'card.html' %}
+						{% endfor %}
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</body>
+</html>

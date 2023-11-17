@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link href="{{ url_for('static', filename='searchBooks.css') }}" rel="stylesheet" />
+		<title>Book Recommender System</title>
+	</head>
+	<body>
+		<div class="bookCard">
+            <img style="background: no-repeat 50px 90px/30px url({{ url_for('static', filename='image-break.png') }})" src="{{ (bookList[i].books)[j]['cover'] }}" class="card-img-top" alt="..." />
+            <div class="card-body">
+                <p class="card-title">{{(bookList[i].books)[j]['name'] }}</p>
+                <p class="card-text">Author: {{ (bookList[i].books)[j]['author'] }}</p>
+            </div>
+        </div>
+	</body>
+</html>

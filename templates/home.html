@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='book.png') }}"/>
+		<link href="{{ url_for('static', filename='base.css') }}" rel="stylesheet" />
+		<link href="{{ url_for('static', filename='home.css') }}" rel="stylesheet" />
+		<meta charset="UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Book Recommendation System</title>
+		<script src="jquery.js"></script> 
+	</head>
+	<body>
+		{% include 'header.html' %}
+		<div class="banner" style="background: no-repeat center/100% url({{ url_for('static', filename='banner.jpg') }})">
+			<div class="nextBtn">
+				<a class="btnText" href="/recommend">Find Your Next Book</a>
+			</div>
+		</div>
+		<div id="topBooks" class="topBooks">
+			<div class="title">Top 50 Books</div>
+			<div class="listContainer">
+				{% for i in range(book_name|length) %}
+					<div class="bookCard" style="width: 18rem">
+						<img src="{{ book_image[i] }}" class="card-img-top" alt="..." />
+						<div class="card-body">
+							<p class="card-title">{{ book_name[i] }}</p>
+							<p class="card-text">{{ book_author[i] }}</p>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</body>
+</html>

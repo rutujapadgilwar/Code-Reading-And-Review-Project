@@ -1,0 +1,22 @@
+.header {
+    height: 47px;
+    padding: 12px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+.header-item {
+    margin-right: 20px;
+    font-size: 18px;
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+.header-item:hover {
+    font-weight: 600;
+    transition: font-weight 0.5s;
+}
+.header-link {
+    all: unset;
+}

@@ -1,0 +1,86 @@
+.banner {
+    width: 100vw;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 75%;
+    min-height: 60%;
+}
+
+.bannerImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+   
+}
+.nextBtn {
+    opacity: 0.85;
+    cursor: pointer;
+    box-shadow: 0px 0px 6px 22px rgb(0 0 0 / 75%);
+    background-color: rgba(0, 0, 0, 0.75);
+    box-sizing: border-box;
+}
+.nextBtn:hover {
+    opacity: 1;
+    transition: opacity 1s;
+}
+.btnText {
+    width: fit-content;
+    padding: 15px 25px;
+    margin: 0;
+    font-size: 26px;
+    font-weight: 600;
+    color: #ffffff;
+}
+.topBooks {
+    margin: 25px 40px;
+    padding: 20px 0 40px;
+}
+.title {
+    font-size: 33px;
+    font-weight: 500;
+    margin: auto;
+    width: fit-content;
+}
+.row {
+    margin-top: 40px;
+}
+.seeMore {
+    padding: 10px 25px;
+    color: #ffffff;
+    background-color: #0d6efd;
+    width: fit-content;
+    border-radius: 16px;
+    margin: 15px auto;
+    cursor: pointer;
+}
+.seeMore:hover {
+    box-shadow: 0px 0px 3px 4px #dcdce1;
+    transition: box-shadow 2s;
+}
+.listContainer {
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+@media (350px <= width <= 670px) {
+    .banner {
+        min-height: 25%
+    }
+    .bookCard {
+        flex: 1 0 auto;
+        margin: 15px;
+    }
+    .listContainer {
+        text-align: center;
+    }
+    .card-body {
+        max-width: 100%;
+    }
+   
+  }
+  @media (671px <= width <= 900px) {
+    .banner {
+        min-height: 35%;
+    }
+   }
