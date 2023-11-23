@@ -261,7 +261,7 @@ def create_book_lists(title, books):
 
 # %%
 #Recommend books by same author of the book with book_name as an input  
-def recommendation_by_same_author(book_name):
+def recommend_books_by_author(book_name):
     books_list = []
     book_name = book_name.lower()
     book_entry = author_recommendations_df[author_recommendations_df['Book-Title'].str.lower().str.contains(book_name)]
@@ -477,9 +477,9 @@ def get_recommendations_by_book(book_name):
     results = collaborative_recommendation(book_name)
     if len(results.books) > 0:
         final_recommendations.append(collaborative_recommendation(book_name))
-    results = recommendation_by_same_author(book_name)
+    results = recommend_books_by_author(book_name)
     if len(results.books) > 0:
-        final_recommendations.append(recommendation_by_same_author(book_name))
+        final_recommendations.append(recommend_books_by_author(book_name))
     results = recommendation_by_same_publisher(book_name)
     if len(results.books) > 0:
         final_recommendations.append(recommendation_by_same_publisher(book_name))

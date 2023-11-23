@@ -6,7 +6,7 @@ import json
 from recommendations import get_recommendations_by_book
 from recommendations import get_recommendations_by_author
 from recommendations import get_recommendations_by_publisher
-from recommendations import get_recommendations_by_yearr
+from recommendations import get_recommendations_by_year
 from recommendations import get_recommendations_by_location
 from recommendations import load_data
 
@@ -28,7 +28,7 @@ def recommend_ui():
 
 @app.route('/recommend_books',methods=['post'])
 def recommend():
-    user_input = request.form.get('user_input')
+    user_input = request.form.get('user-input')
     option_selection = request.form.get('searchBy')
     if len(str(user_input)) == 0:   
         return render_template('searchBooks.html')
@@ -45,7 +45,7 @@ def recommend():
             final_results = json.loads(get_recommendations_by_publisher(user_input))
 
         case "year":
-            final_results = json.loads(get_recommendations_by_yearr(user_input))
+            final_results = json.loads(get_recommendations_by_year(user_input))
 
         case "location":
             final_results = json.loads(get_recommendations_by_location(user_input))
