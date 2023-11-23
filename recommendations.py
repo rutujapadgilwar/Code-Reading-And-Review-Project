@@ -1,17 +1,16 @@
-# ## Data Loading
-
 #importing python libraries
 import pandas as pd
 import numpy as np
 import pickle
 import matplotlib.pyplot as plt
+import json
 
-# %%
 df_recommendation_dataset = pd.DataFrame()
 df_author_recommendations = pd.DataFrame()
 df_books = pd.DataFrame()
 df_pivot_table = pd.DataFrame()
 df_similarity_scores = []
+
 def load_data():
     global df_recommendation_dataset, df_author_recommendations, df_books, df_pivot_table, df_similarity_scores   
     df_recommendation_dataset = (pickle.load(open('pklFiles/books_with_ratings.pkl', 'rb')))
@@ -21,8 +20,7 @@ def load_data():
     df_similarity_scores = pickle.load(open('pklFiles/similarity_scores.pkl', 'rb'))
 
 load_data()
-# #### Create objects for the recommended books
-
+# Create objects for the recommended books
 class Recommendations:
     def __init__(self, title, books):
         self.title = title
@@ -34,79 +32,70 @@ class Book:
         self.cover = cover
         self.author = author
 
-# #### Helper method to create books in custom list from dataframe
-
-import json
+# Helper method to create books in custom list from dataframe
 def create_book_lists_helper(title, books):
     recommendation_books = Recommendations(title, books)
     return recommendation_books
 
-# ## Recommendation for same author
-
-#Recommend books by same author of the book with book_name as an input  
-def recommendation_by_same_author(book_name):
+# Recommend books by same author of the book with book_name as an input  
+def recommend_books(book_name, recommendation_type):
     books_list = []
-    print(book_name)
     book_name = book_name.lower()
     book_entry = df_author_recommendations[df_author_recommendations['Book-Title'].str.lower().str.contains(book_name)]
+
     if book_entry.empty:
-        return create_book_lists_helper("oops! No author recommendations for the input", books_list)
-    book_author = book_entry['Book-Author'].iloc[0]
-    author_recommendations = df_author_recommendations.loc[df_author_recommendations['Book-Author'] == book_author,:][:5]
-    author_recommendations.drop(author_recommendations.index[author_recommendations['Book-Title'] == book_name], inplace = True)
-    for book_info in author_recommendations.values.tolist():
+        return create_book_lists_helper(f"Oops! No {recommendation_type} recommendations for the input", books_list)
+
+    if recommendation_type == "author":
+        recommendation_column = 'Book-Author'
+    elif recommendation_type == "publisher":
+        recommendation_column = 'Publisher'
+    else:
+        return create_book_lists_helper("Invalid recommendation type", books_list)
+
+    book_value = book_entry[recommendation_column].iloc[0]
+    recommendation_df = df_author_recommendations[df_author_recommendations[recommendation_column] == book_value][:5]
+
+    recommendation_df.drop(recommendation_df.index[recommendation_df['Book-Title'] == book_name], inplace=True)
+
+    for book_info in recommendation_df.values.tolist():
         recommended_book = Book(book_info[0], book_info[8], book_info[5])
         books_list.append(recommended_book)
-    
-    return create_book_lists_helper("Top Books with same author", books_list)
 
-# ## Recommendation by the given author name
+    return create_book_lists_helper(f"Top Books with same {recommendation_type}", books_list)
+
+# Recommendation books by the same author name
+def recommend_books_by_author(book_name):
+    return recommend_books(book_name, "author")
+
+# Recommendation books by the same author name
+def recommend_books_by_publisher(book_name):
+    return recommend_books(book_name, "publisher")
+
+# Helper method for author name and publisher name
+def recommendation_by_given_category(category_name, category_column):
+    books_list = []
+    category_name = category_name.lower()
+    category_recommendations = df_author_recommendations.loc[pd.notna(df_author_recommendations[category_column]) & df_author_recommendations[category_column].str.lower().str.contains(category_name), :][:5]
+
+    if category_recommendations.empty:
+        return create_book_lists_helper(f"Oops! No {category_column} recommendations for the input", books_list)
+
+    for book_info in category_recommendations.values.tolist():
+        recommended_book = Book(book_info[0], book_info[8], book_info[5])
+        books_list.append(recommended_book)
+
+    return create_book_lists_helper(f"Similar top Books by given {category_column}", books_list)
+
+# Recommendation by the given author name
 def recommendation_by_given_author(author_name):
-    books_list = []
-    author_name = author_name.lower()
-    author_recommendations = df_author_recommendations.loc[pd.notna(df_author_recommendations['Book-Author']) & df_author_recommendations['Book-Author'].str.lower().str.contains(author_name), :][:5]
-    if author_recommendations.empty:
-        return create_book_lists_helper("oops! No author recommendations for the input", books_list)
-    for book_info in author_recommendations.values.tolist():
-        recommended_book = Book(book_info[0], book_info[8], book_info[5])
-        books_list.append(recommended_book)
-    return create_book_lists_helper("Similar top Books by given author", books_list)
+    return recommendation_by_given_category(author_name, 'Book-Author')
 
-# ## Recommendation for same publisher
-#Recommend books by same publisher of the book with bookname as an input  
-def recommendation_by_same_publisher(book_name):
-    books_list = []
-    book_name = book_name.lower()
-    book_entry = df_author_recommendations[df_author_recommendations['Book-Title'].str.lower().str.contains(book_name)]
-    if book_entry.empty:
-        return create_book_lists_helper("oops! No publisher recommendations for the input", books_list)
-    book_publisher = book_entry['Publisher'].iloc[0]
-    publisher_recommendations = df_author_recommendations.loc[df_author_recommendations['Publisher'] == book_publisher,:][:5]
-    publisher_recommendations.drop(publisher_recommendations.index[publisher_recommendations['Book-Title'] == book_name], inplace = True)
-
-    for book_info in publisher_recommendations.values.tolist():
-        recommended_book = Book(book_info[0], book_info[8], book_info[5])
-        books_list.append(recommended_book)
-    return create_book_lists_helper("Top Books published by same publisher", books_list) 
-
-# ## Recommendation by the given publisher name
-#recommendation by the given publisher name
+# Recommendation by the given publisher name
 def recommendation_by_given_publisher(publisher_name):
-    books_list = []
-    publisher_name = publisher_name.lower()
-    author_recommendations = df_author_recommendations.loc[df_author_recommendations['Publisher'].str.lower().str.contains(publisher_name),:][:5]
-    if author_recommendations.empty:
-        return create_book_lists_helper("oops! No publisher recommendations for the input", books_list)
-    for book_info in author_recommendations.values.tolist():
-        recommended_book = Book(book_info[0], book_info[8], book_info[5])
-        books_list.append(recommended_book)
-    return create_book_lists_helper("Similar top Books by given publisher", books_list)
+    return recommendation_by_given_category(publisher_name, 'Publisher')
 
-#similarity-scores
-from sklearn.metrics.pairwise import cosine_similarity
-#df_similarity_scores = cosine_similarity(df_pivot_table)
-
-# %%
+# Recommendation by similar trending similar books
 def collaborative_recommendation(book_name):
     books_list = []
     array_size = np.where(df_pivot_table.index== book_name)[0]
@@ -127,9 +116,7 @@ def collaborative_recommendation(book_name):
     
     return create_book_lists_helper("Top trending similar books", books_list)
 
-
-# ## Books Published Yearly
-# get books published in the same year 
+# Get books published in the same year 
 def recommendations_by_year(year_or_book: int or str):
     books_list = []
     try:
@@ -167,8 +154,7 @@ def recommendations_by_year(year_or_book: int or str):
         books_list.append(recommended_book)
     return create_book_lists_helper("Trending books in the same year", books_list)
 
-# ## Books published at the given place
-#location as input
+# Books published at the given place
 def recommendations_by_location(place):
     books_list = []
     if place is not None:
@@ -192,8 +178,7 @@ def recommendations_by_location(place):
     else:
         return create_book_lists_helper("oops! No recommendations for place input", books_list)
 
-# %%
-#book name as input
+# Books published at the given place
 def recommendation_by_same_place(book_name):
     books_list = []
     if book_name is not None:
@@ -224,33 +209,26 @@ def recommendation_by_same_place(book_name):
     else:
         return create_book_lists_helper("oops! No recommendations for place input", books_list)    
 
-# ### Converting result to JSON format for frontend
+# Converting result to JSON format for frontend
 def results_in_json(final_recommendations):   
     result = json.dumps(final_recommendations, default=lambda o: o.__dict__, indent=4)
     return result
 
 # get Final results for all recommendations according to title
 def get_recommendations_by_book(book_name):
-    final_recommendations = []
-    results = collaborative_recommendation(book_name)
-    if len(results.books) > 0:
-        final_recommendations.append(collaborative_recommendation(book_name))
-    results = recommendation_by_same_author(book_name)
-    if len(results.books) > 0:
-        final_recommendations.append(recommendation_by_same_author(book_name))
-    results = recommendation_by_same_publisher(book_name)
-    if len(results.books) > 0:
-        final_recommendations.append(recommendation_by_same_publisher(book_name))
-    results = recommendations_by_year(book_name)
-    if len(results.books) > 0:
-        final_recommendations.append(recommendations_by_year(book_name))
-    results = recommendation_by_same_place(book_name)
-    if len(results.books) > 0:
-        final_recommendations.append(recommendation_by_same_place(book_name))
+    final_recommendations = [
+    collaborative_recommendation(book_name) if collaborative_recommendation(book_name).books else None,
+    recommend_books_by_author(book_name) if recommend_books_by_author(book_name).books else None,
+    recommend_books_by_publisher(book_name) if recommend_books_by_publisher(book_name).books else None,
+    recommendations_by_year(book_name) if recommendations_by_year(book_name).books else None,
+    recommendation_by_same_place(book_name) if recommendation_by_same_place(book_name).books else None
+    ]
 
-    if len(final_recommendations) == 0:
-        final_recommendations.append(create_book_lists_helper("No books found!",[]))
-    
+    final_recommendations = [result for result in final_recommendations if result is not None]  # Remove None values
+
+    if not final_recommendations:
+        final_recommendations.append(create_book_lists_helper("No books found!", []))
+
     return results_in_json(final_recommendations)
 
 def get_recommendations_by_author(author_name):
@@ -265,7 +243,7 @@ def get_recommendations_by_publisher(publisher_name):
 
 def get_recommendations_by_year(year):
     final_recommendations = []
-    final_recommendations.append(get_recommendations_by_year(year))
+    final_recommendations.append(recommendations_by_year(year))
     return results_in_json(final_recommendations)
 
 def get_recommendations_by_location(location):
