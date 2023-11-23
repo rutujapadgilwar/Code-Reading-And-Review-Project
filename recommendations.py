@@ -37,7 +37,7 @@ class Book:
 # #### Helper method to create books in custom list from dataframe
 
 import json
-def create_book_lists(title, books):
+def create_book_lists_helper(title, books):
     recommendation_books = Recommendations(title, books)
     return recommendation_books
 
@@ -46,6 +46,7 @@ def create_book_lists(title, books):
 #Recommend books by same author of the book with book_name as an input  
 def recommendation_by_same_author(book_name):
     books_list = []
+    print(book_name)
     book_name = book_name.lower()
     book_entry = df_author_recommendations[df_author_recommendations['Book-Title'].str.lower().str.contains(book_name)]
     if book_entry.empty:
@@ -218,7 +219,7 @@ def recommendation_by_same_place(book_name):
             return create_book_lists_helper("oops! No recommendations for place input", books_list)    
         for book_info in same_place_books.values.tolist():
             recommended_book = Book(book_info[0], book_info[4], book_info[1])
-            booksList.append(recommended_book)
+            books_list.append(recommended_book)
         return create_book_lists_helper("Trending books at the same location", books_list)
     else:
         return create_book_lists_helper("oops! No recommendations for place input", books_list)    
@@ -242,7 +243,7 @@ def get_recommendations_by_book(book_name):
         final_recommendations.append(recommendation_by_same_publisher(book_name))
     results = recommendations_by_year(book_name)
     if len(results.books) > 0:
-        final_recommendations.append(getBooksYearly(book_name))
+        final_recommendations.append(recommendations_by_year(book_name))
     results = recommendation_by_same_place(book_name)
     if len(results.books) > 0:
         final_recommendations.append(recommendation_by_same_place(book_name))
