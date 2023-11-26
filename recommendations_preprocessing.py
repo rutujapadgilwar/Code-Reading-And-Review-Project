@@ -5,10 +5,17 @@ import pickle
 import json
 from sklearn.metrics.pairwise import cosine_similarity
 
+def load_csv(file_path):
+    try:
+        return pd.read_csv(file_path, low_memory=False)
+    except FileNotFoundError as e:
+        print(f"Error loading dataset at {file_path}: {e}")
+        return None
+
 #loading datasets
-df_books = pd.read_csv('Dataset/Books.csv', low_memory=False)
-df_ratings = pd.read_csv('Dataset/Ratings.csv')
-df_users = pd.read_csv('Dataset/Users.csv')
+df_books = load_csv('Dataset/Books.csv')
+df_ratings = load_csv('Dataset/Ratings.csv')
+df_users = load_csv('Dataset/Users.csv')
 
 def handle_missing_values(df, column, default_value):
     null_indices = np.where(df[column].isnull())[0]
@@ -50,9 +57,12 @@ cases_to_edit = [
 
 for case in cases_to_edit:
     index, author_value, year_value, publisher_value = case
-    df_books.at[index, 'Book-Author'] = author_value
-    df_books.at[index, 'Year-Of-Publication'] = year_value
-    df_books.at[index, 'Publisher'] = publisher_value
+    try:
+        df_books.at[index, 'Book-Author'] = author_value
+        df_books.at[index, 'Year-Of-Publication'] = year_value
+        df_books.at[index, 'Publisher'] = publisher_value
+    except KeyError as e:
+        print(f"Error editing data for index {index}: {e}")
 
 # Converting year of publication to int and cleaning invalid years
 df_books['Year-Of-Publication'] = pd.to_numeric(df_books['Year-Of-Publication'], errors='coerce')
