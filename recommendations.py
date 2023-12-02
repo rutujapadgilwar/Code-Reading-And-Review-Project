@@ -235,7 +235,7 @@ class RecommendationSystem:
             print(f"Error in recommendation_by_same_place: {e}")
 
     # Converting result to JSON format for frontend
-    def results_in_json(final_recommendations): 
+    def results_in_json(self, final_recommendations): 
 
         try:  
             result = json.dumps(final_recommendations, default=lambda o: o.__dict__, indent=4)
