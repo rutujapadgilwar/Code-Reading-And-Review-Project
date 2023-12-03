@@ -3,16 +3,14 @@ import pickle
 import numpy as np
 import json
 
-from recommendations import get_recommendations_by_book
-from recommendations import get_recommendations_by_author
-from recommendations import get_recommendations_by_publisher
-from recommendations import get_recommendations_by_year
-from recommendations import get_recommendations_by_location
-from recommendations import load_data
+from recommendations import RecommendationSystem
+recommendation_obj = RecommendationSystem()
 
 top_50_books = pickle.load(open('pklFiles/top_50_books.pkl', 'rb'))
-load_data()
+recommendation_obj.load_data()
 app = Flask(__name__)
+
+
 
 @app.route('/')
 def index():
@@ -36,19 +34,19 @@ def recommend():
 
     match option_selection:
         case "bookname":
-            final_results = json.loads(get_recommendations_by_book(user_input))
+            final_results = json.loads(recommendation_obj.get_recommendations_by_book(user_input))
         
         case "author":
-            final_results = json.loads(get_recommendations_by_author(user_input))
+            final_results = json.loads(recommendation_obj.get_recommendations_by_author(user_input))
 
         case "publisher":
-            final_results = json.loads(get_recommendations_by_publisher(user_input))
+            final_results = json.loads(recommendation_obj.get_recommendations_by_publisher(user_input))
 
         case "year":
-            final_results = json.loads(get_recommendations_by_year(user_input))
+            final_results = json.loads(recommendation_obj.get_recommendations_by_year(user_input))
 
         case "location":
-            final_results = json.loads(get_recommendations_by_location(user_input))
+            final_results = json.loads(recommendation_obj.get_recommendations_by_location(user_input))
 
     return render_template('searchBooks.html', bookList=final_results)
 
