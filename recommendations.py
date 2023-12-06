@@ -1,4 +1,9 @@
-#importing python libraries
+"""
+
+This file contains a RecommendationSystem class that loads data from pickle files
+and provides methods for recommending books based on various criteria.
+
+"""
 import pandas as pd
 import numpy as np
 import pickle
@@ -24,8 +29,6 @@ class RecommendationSystem:
         except FileNotFoundError as e:
             print(f"Error loading data: {e}")
 
-    load_data()
-    # Create objects for the recommended books
     class Recommendations:
         def __init__(self, title, books):
             self.title = title
@@ -37,13 +40,12 @@ class RecommendationSystem:
             self.cover = cover
             self.author = author
 
-    # Helper method to create books in custom list from dataframe
     def create_book_lists_helper(self,title, books):
         recommendation_books = self.Recommendations(title, books)
         return recommendation_books
 
-    # Recommend books by same author of the book with book_name as an input  
     def recommend_books(self,book_name, recommendation_type):
+        """Recommend books based on the same author or publisher."""
         books_list = []
 
         try:
@@ -73,15 +75,12 @@ class RecommendationSystem:
         except Exception as e:
             print(f"Error in recommend_books: {e}")
 
-    # Recommendation books by the same author name
     def recommend_books_by_author(self,book_name):
         return self.recommend_books(book_name, "author")
 
-    # Recommendation books by the same author name
     def recommend_books_by_publisher(self,book_name):
         return self.recommend_books(book_name, "publisher")
 
-    # Helper method for author name and publisher name
     def recommendation_by_given_category(self,category_name, category_column):
         books_list = []
 
@@ -100,16 +99,14 @@ class RecommendationSystem:
         except Exception as e:
             print(f"Error in recommendation_by_given_category: {e}")
 
-    # Recommendation by the given author name
     def recommendation_by_given_author(self,author_name):
         return self.recommendation_by_given_category(author_name, 'Book-Author')
 
-    # Recommendation by the given publisher name
     def recommendation_by_given_publisher(self,publisher_name):
         return self.recommendation_by_given_category(publisher_name, 'Publisher')
 
-    # Recommendation by similar trending similar books
     def collaborative_recommendation(self,book_name):
+        """ Recommendation based on trending similar books."""
         books_list = []
 
         try:
@@ -133,45 +130,33 @@ class RecommendationSystem:
         except Exception as e:
             print(f"Error in collaborative_recommendation: {e}")
 
-    # Get books published in the same year 
     def recommendations_by_year(self,year_or_book: int or str):
         books_list = []
         try:
             year_of_publication = int(year_or_book)
-            #valid year checking
             if (year_of_publication < 1900):
                 return self.create_book_lists_helper("oops! Please input the valid year between 1900 - 2022", books_list)
             elif (year_of_publication > 2022):
                 return self.create_book_lists_helper("oops! Please input the valid year between 1900 - 2022", books_list)
-            
-            #filter books in the same year
             same_year_books = df_recommendation_dataset[df_recommendation_dataset['Year-Of-Publication'] == year_of_publication]
         except:
-            #check for book name
             same_year_books = df_recommendation_dataset[df_recommendation_dataset['Book-Title'].str.lower().str.contains(year_or_book.lower())]
-            
-            #no books from the same year
             if (len(same_year_books)== 0):
                 return self.create_book_lists_helper("oops! No yearly recommendations for the input", books_list)        
-            
-            #year of publication of the same book
             year_of_publication = same_year_books.iloc[0]['Year-Of-Publication']
             same_year_books = df_recommendation_dataset[df_recommendation_dataset['Year-Of-Publication'] == year_of_publication]
 
         if (len(same_year_books)== 0):
             return self.create_book_lists_helper("oops! No recommendations for year input", books_list)
 
-        #top 5 rated books
-        same_year_books = same_year_books.sort_values(by="Book-Rating", ascending=False)[:5]
+        same_year_books = same_year_books.sort_values(by="Book-Rating", ascending=False)[:5] #top 5 rated books
         
-        #dropping the duplicates
         same_year_books = same_year_books.drop_duplicates(subset=["Book-Title"])
         for book_info in same_year_books.values.tolist():
             recommended_book = self.Book(book_info[0], book_info[4], book_info[1])
             books_list.append(recommended_book)
         return self.create_book_lists_helper("Trending books in the same year", books_list)
 
-    # Books published at the given place
     def recommendations_by_location(self,place):
         books_list = []
 
@@ -185,8 +170,7 @@ class RecommendationSystem:
         
             if places.any():
                 same_place_books = df_recommendation_dataset[places]
-                #top 5 rated books
-                same_place_books = same_place_books.sort_values(by = "Book-Rating", ascending=False)[:5]
+                same_place_books = same_place_books.sort_values(by = "Book-Rating", ascending=False)[:5] #top 5 rated books
                 same_place_books = same_place_books.drop_duplicates(subset=["Book-Title"])
                 if(len(same_place_books) == 0):
                     return self.create_book_lists_helper("oops! No recommendations for place input", books_list)
@@ -199,7 +183,6 @@ class RecommendationSystem:
         except Exception as e:
             print(f"Error in recommendations_by_location: {e}")
 
-    # Books published at the given place
     def recommendation_by_same_place(self,book_name):
         books_list = []
 
@@ -207,10 +190,7 @@ class RecommendationSystem:
             if book_name is not None:
                 book_name = book_name.lower()
 
-                #check for book name
-                same_place_books = df_recommendation_dataset[df_recommendation_dataset['Book-Title'].str.lower().str.contains(book_name.lower())]
-            
-                #no books from the same year
+                same_place_books = df_recommendation_dataset[df_recommendation_dataset['Book-Title'].str.lower().str.contains(book_name.lower())]            
                 if (len(same_place_books) == 0):
                     return self.create_book_lists_helper("oops! No recommendations for place input", books_list)
                 
@@ -220,8 +200,7 @@ class RecommendationSystem:
         
             if places.any():
                 same_place_books = df_recommendation_dataset[places]
-                #top 5 rated books
-                same_place_books = same_place_books.sort_values(by = "Book-Rating", ascending=False)[:5]
+                same_place_books = same_place_books.sort_values(by = "Book-Rating", ascending=False)[:5] #top 5 rated books
                 same_place_books = same_place_books.drop_duplicates(subset=["Book-Title"])
                 if(len(same_place_books) == 0):
                     return self.create_book_lists_helper("oops! No recommendations for place input", books_list)    
@@ -234,7 +213,6 @@ class RecommendationSystem:
         except Exception as e:
             print(f"Error in recommendation_by_same_place: {e}")
 
-    # Converting result to JSON format for frontend
     def results_in_json(self, final_recommendations): 
 
         try:  
@@ -243,8 +221,8 @@ class RecommendationSystem:
         except json.JSONDecodeError as e:
                 print(f"Error in results_in_json: {e}")
 
-    # get Final results for all recommendations according to title
     def get_recommendations_by_book(self,book_name):
+        """Get final recommendations for a input book."""
         try:
             final_recommendations = [
             self.collaborative_recommendation(book_name) if self.collaborative_recommendation(book_name).books else None,
