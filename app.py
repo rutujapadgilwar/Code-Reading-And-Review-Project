@@ -1,3 +1,13 @@
+"""
+
+This file provides a web interface with routes for rendering the home page, recommending books based on 
+user input, and displaying top books. 
+The application loads preprocessed data, including top 50 books and recommendation datasets, 
+and utilizes the RecommendationSystem to offer book recommendations by book title, author, publisher, 
+year, and location. 
+The 'home.html' and 'searchBooks.html' templates are used for rendering the web pages.
+
+"""
 from flask import Flask,render_template, request
 import pickle
 import numpy as np
@@ -9,8 +19,6 @@ recommendation_obj = RecommendationSystem()
 top_50_books = pickle.load(open('pklFiles/top_50_books.pkl', 'rb'))
 recommendation_obj.load_data()
 app = Flask(__name__)
-
-
 
 @app.route('/')
 def index():
@@ -49,7 +57,6 @@ def recommend():
             final_results = json.loads(recommendation_obj.get_recommendations_by_location(user_input))
 
     return render_template('searchBooks.html', bookList=final_results)
-
 
 if __name__== '__main__':
     app.run(debug=True)
